@@ -1,0 +1,14 @@
+{
+    "name": "AutomationTools.Asset",
+    "references": [
+        "AutomationTools.Util"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

@@ -1,0 +1,15 @@
+{
+    "name": "AutomationTools.Main",
+    "references": [
+        "AutomationTools.Util",
+        "AutomationTools.View"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}
