@@ -1,11 +1,9 @@
 {
-    "name": "AutomationTools.View",
+    "name": "AutomationTools.GamePlay",
     "references": [
-        "AutomationTools.Asset",
-        "AutomationTools.Data",
+        "AutomationTools.Proto",
         "AutomationTools.Util",
-        "AutomationTools.UI",
-        "AutomationTools.Proto"
+        "AutomationTools.Asset"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

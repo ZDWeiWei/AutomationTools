@@ -1,11 +1,7 @@
 {
-    "name": "AutomationTools.View",
+    "name": "AutomationTools.UI",
     "references": [
-        "AutomationTools.Asset",
-        "AutomationTools.Data",
-        "AutomationTools.Util",
-        "AutomationTools.UI",
-        "AutomationTools.Proto"
+        "AutomationTools.Util"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

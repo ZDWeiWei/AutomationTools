@@ -2,7 +2,9 @@
     "name": "AutomationTools.Main",
     "references": [
         "AutomationTools.Util",
-        "AutomationTools.View"
+        "AutomationTools.View",
+        "AutomationTools.Stage",
+        "AutomationTools.GamePlay"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

@@ -47,5 +47,12 @@ namespace Sofunny.Tools.AutomationTools.Util {
             }
             instance.UnregisterLateUpdate(update);
         }
+
+        public static void AddInvoke(InvokeDelegate handler, float invokeTime) {
+            if (instance == null) {
+                return;
+            }
+            instance.RegisterInvoke(handler, invokeTime);
+        }
     }
 }

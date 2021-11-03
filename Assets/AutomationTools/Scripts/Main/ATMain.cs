@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Sofunny.Tools.AutomationTools.GamePlay;
+using Sofunny.Tools.AutomationTools.Stage;
 using Sofunny.Tools.AutomationTools.Util;
 using Sofunny.Tools.AutomationTools.View;
 using UnityEngine;
@@ -9,13 +11,18 @@ namespace Sofunny.Tools.AutomationTools.Main {
     public sealed class ATMain : MonoBehaviour {
         private readonly Queue<Task> tasks = new Queue<Task>();
         private ATUpdateRegister updateRegister;
-        private ViewManager viewManager;
+
+        void Awake() {
+            DontDestroyOnLoad(this);
+        }
 
         void Start() {
             tasks.Enqueue(new Task("初始化 UpdateRegister", InitUpdateRegister));
-            tasks.Enqueue(new Task("初始化 View", InitView));
+            tasks.Enqueue(new Task("初始化 ViewManager", InitView));
+            tasks.Enqueue(new Task("初始化 GamePlayManager", InitGamePlay));
+            tasks.Enqueue(new Task("初始化 StageManager", InitStage));
         }
-        
+
         void Update() {
             if (updateRegister != null) {
                 updateRegister.OnUpdate(Time.deltaTime);
@@ -44,8 +51,18 @@ namespace Sofunny.Tools.AutomationTools.Main {
         }
 
         void InitView() {
-            viewManager = new ViewManager();
-            viewManager.Init();
+            var manager = new ViewManager();
+            manager.Init();
+        }
+
+        void InitGamePlay() {
+            var manager = new GamePlayManager();
+            manager.Init();
+        }
+        
+        void InitStage() {
+            var manager = new StageManager();
+            manager.Init();
         }
 
         /// <summary>

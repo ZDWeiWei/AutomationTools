@@ -31,6 +31,7 @@ namespace Sofunny.Tools.AutomationTools.Util {
         public void OnUpdate(float delta) {
             TickRemoveUpdates(m_Updates, m_RemoveUpdates);
             TickUpdates(m_Updates, delta);
+            TickInvokeUpdates(delta);
         }
 
         public void OnFixUpdate(float delta) {
@@ -80,7 +81,7 @@ namespace Sofunny.Tools.AutomationTools.Util {
             int index = SearchUpdateIndex(updates, handler);
             if (index >= 0) {
                 var w = updates[index];
-                w.IsRemove = true;
+                w.Clear();
                 updates[index] = w;
                 removeUpdates.Add(w);
             }
@@ -129,6 +130,12 @@ namespace Sofunny.Tools.AutomationTools.Util {
                 IsRemove = false;
                 Handler = handler;
                 name = StringUtil.Concat(Handler.Target.GetType(), ".", Handler.Method.Name);
+            }
+
+            public void Clear() {
+                IsRemove = true;
+                Handler = null;
+                name = "";
             }
 
             public void Invoke(float delta) {

@@ -14,8 +14,11 @@ namespace Sofunny.Tools.AutomationTools.Asset {
         }
 
         public static GameObject LoadUIRoot() {
-            var url = StringUtil.Concat(URI.Root, "/ATUIRoot");
-            return LoadAsset<GameObject>(url);
+            return LoadAsset<GameObject>(URI.Root);
+        }
+
+        public static ResourceRequest LoadGamePlayRole() {
+            return LoadAssetAsync<GameObject>(URI.Role);
         }
         
         public static T LoadAsset<T>(string url) where T : UnityEngine.Object {
