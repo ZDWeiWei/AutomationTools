@@ -2,7 +2,6 @@
     "name": "AutomationTools.View",
     "references": [
         "AutomationTools.Asset",
-        "AutomationTools.Data",
         "AutomationTools.Util",
         "AutomationTools.UI",
         "AutomationTools.Proto"

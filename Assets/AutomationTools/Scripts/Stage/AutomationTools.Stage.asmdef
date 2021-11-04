@@ -1,8 +1,8 @@
 {
     "name": "AutomationTools.Stage",
     "references": [
-        "AutomationTools.Proto",
-        "AutomationTools.Util"
+        "AutomationTools.Util",
+        "AutomationTools.Proto"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

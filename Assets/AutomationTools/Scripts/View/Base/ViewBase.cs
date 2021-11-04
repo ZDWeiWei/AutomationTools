@@ -22,7 +22,7 @@ namespace Sofunny.Tools.AutomationTools.View {
         }
         private OpenStateEnum openState = OpenStateEnum.Close;
         private Action<OpenStateEnum> onOpenCallBack;
-        private UIRoot.UIRootEnum myLayer = UIRoot.UIRootEnum.None;
+        private ViewManager.UIRootEnum myLayer = ViewManager.UIRootEnum.None;
         private Transform layerParent;
         private UIBase ui;
 
@@ -58,7 +58,7 @@ namespace Sofunny.Tools.AutomationTools.View {
         virtual protected void RegisterUIEvent(UIBase ui) {
         }
 
-        public void SetLayer(Transform parent, UIRoot.UIRootEnum layer) {
+        public void SetLayer(Transform parent, ViewManager.UIRootEnum layer) {
             if (myLayer == layer) {
                 return;
             }

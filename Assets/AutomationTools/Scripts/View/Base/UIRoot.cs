@@ -4,31 +4,20 @@ using UnityEngine;
 
 namespace Sofunny.Tools.AutomationTools.View {
     public class UIRoot : MonoBehaviour {
-        public enum UIRootEnum {
-            Base,
-            Loading,
-            Tip,
-            
-            None,
+        [SerializeField]
+        private GameObject baseLayer;
+        public GameObject BaseLayer {
+            get { return baseLayer; }
         }
-
         [SerializeField]
-        private GameObject BaseLayer;
+        private GameObject loadingLayer;
+        public GameObject LoadingLayer {
+            get { return loadingLayer; }
+        }
         [SerializeField]
-        private GameObject LoadingLayer;
-        [SerializeField]
-        private GameObject TipLayer;
-
-        public GameObject Get(UIRootEnum type) {
-            switch (type) {
-                case UIRootEnum.Base:
-                    return BaseLayer;
-                case UIRootEnum.Loading:
-                    return LoadingLayer;
-                case UIRootEnum.Tip:
-                    return TipLayer;
-            }
-            return null;
+        private GameObject tipLayer;
+        public GameObject TipLayer {
+            get { return tipLayer; }
         }
     }
 }

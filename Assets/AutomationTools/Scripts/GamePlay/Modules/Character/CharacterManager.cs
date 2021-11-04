@@ -7,43 +7,33 @@ using UnityEngine;
 
 namespace Sofunny.Tools.AutomationTools.GamePlay {
     public class CharacterManager : IGameWorld {
-        private List<CharacterEntity> roles = new List<CharacterEntity>();
+        private List<CharacterSystem> systems = new List<CharacterSystem>();
+
+        public void Register() {
+        }
+
         public void Init() {
-            AddRole(true);
-            ATUpdateRegister.AddUpdate(OnUpdate);
+            AddCharacterSystem(true);
             GameProtoManager.Send(new GameProtoDoc_Character.OpenCharacterUI());
         }
-        
+
         public void Clear() {
-            ATUpdateRegister.RemoveUpdate(OnUpdate);
             RemoveAllRole();
         }
 
-        public void OnUpdate(float delta) {
+        private void AddCharacterSystem(bool isLocalRole) {
+            var system = new CharacterSystem();
+            system.Init();
+            system.SetIsLocalRole(isLocalRole);
+            systems.Add(system);
         }
 
-        public void AddRole(bool isLocalRole) {
-            var request = AssetManager.LoadGamePlayRole();
-            request.completed += operation => {
-                var prefab = (GameObject) request.asset;
-                if (prefab != null) {
-                    var roleGameObj = GameObject.Instantiate(prefab);
-                    var entity = roleGameObj.GetComponent<CharacterEntity>();
-                    entity.Init(isLocalRole);
-                    roles.Add(entity);
-                } else {
-                    Debug.LogError("GamePlayRole 加载失败:");
-                }
-            };
-        }
-
-        public void RemoveAllRole() {
-            for (int i = 0; i < roles.Count; i++) {
-                var role = roles[i];
+        private void RemoveAllRole() {
+            for (int i = 0; i < systems.Count; i++) {
+                var role = systems[i];
                 role.Clear();
-                GameObject.Destroy(role.gameObject);
             }
-            roles.Clear();
+            systems.Clear();
         }
     }
 }

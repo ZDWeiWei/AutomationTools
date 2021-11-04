@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Sofunny.Tools.AutomationTools.GamePlay {
     public interface IGameWorld {
+        void Register();
         void Init();
         void Clear();
     }
@@ -20,13 +21,20 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
         }
 
         public void InitManager() {
+            AddManager<GameWorldLayerManager>();
+            AddManager<GameWorldMapManager>();
             AddManager<CharacterManager>();
+            AddManager<CameraManager>();
+            
+            foreach (var manager in managers) {
+                manager.Init();
+            }
         }
 
         public void AddManager<T>() where T : IGameWorld, new() {
             IGameWorld manager = new T();
             managers.Add(manager);
-            manager.Init();
+            manager.Register();
         }
 
         public void RemoveManager() {

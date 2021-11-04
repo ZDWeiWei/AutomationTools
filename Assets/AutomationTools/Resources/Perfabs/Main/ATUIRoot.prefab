@@ -107,9 +107,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6949365264bc8dd40be1f39ebdff3949, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BaseLayer: {fileID: 7419022185564848441}
-  LoadingLayer: {fileID: 7419022185050846681}
-  TipLayer: {fileID: 7419022184785864534}
+  baseLayer: {fileID: 7419022185564848441}
+  loadingLayer: {fileID: 7419022185050846681}
+  tipLayer: {fileID: 7419022184785864534}
 --- !u!1 &7419022185428895763
 GameObject:
   m_ObjectHideFlags: 0
