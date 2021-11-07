@@ -20,15 +20,12 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
 
         public void OnUpdate(float delta) {
             var data = this.system.Data;
-            if (data.Entity.IsLoadEntityObj == false) {
-                return;
-            }
-            
-            var distance = Vector3.Distance(data.Entity.Point, data.TargetPoint);
+            var point = data.Entity.GetPoint(CameraEntity.Root);
+            var distance = Vector3.Distance(point, data.TargetPoint);
             if (distance > 10f) {
-                data.Entity.SetPoint(data.TargetPoint);
+                data.Entity.SetPoint(CameraEntity.Root, data.TargetPoint);
             } else {
-                data.Entity.SetPoint(Vector3.Lerp(data.Entity.Point, data.TargetPoint, speed * delta));
+                data.Entity.SetPoint(CameraEntity.Root, Vector3.Lerp(point, data.TargetPoint, speed * delta));
             }
         }
     }

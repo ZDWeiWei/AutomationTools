@@ -18,6 +18,7 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
             AddComponent<CameraEntity>();
             AddComponent<CameraMove>();
             AddComponent<CameraTarget>();
+            AddComponent<CameraRota>();
         }
 
         protected override void OnClear() {

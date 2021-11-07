@@ -23,10 +23,10 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
                 return;
             }
             GameProtoManager.Send(new GameProtoDoc_Camera.SetPoint {
-                point = system.Data.Entity.Point
+                point = system.Data.Entity.GetPoint(CharacterEntity.Root)
             });
             GameProtoManager.Send(new GameProtoDoc_Camera.SetRotation {
-                rota = system.Data.Entity.Rotation
+                rota = system.Data.Entity.GetRota(CharacterEntity.Root)
             });
         }
     }

@@ -18,6 +18,7 @@ namespace Sofunny.Tools.AutomationTools.Main {
 
         void Start() {
             tasks.Enqueue(new Task("初始化 UpdateRegister", InitUpdateRegister));
+            tasks.Enqueue(new Task("初始化 TouchSystem", InitTouchSystem));
             tasks.Enqueue(new Task("初始化 ViewManager", InitView));
             tasks.Enqueue(new Task("初始化 GamePlayManager", InitGamePlay));
             tasks.Enqueue(new Task("初始化 StageManager", InitStage));
@@ -48,6 +49,11 @@ namespace Sofunny.Tools.AutomationTools.Main {
         void InitUpdateRegister() {
             updateRegister = new ATUpdateRegister();
             updateRegister.Init();
+        }
+
+        void InitTouchSystem() {
+            var touchSystem = new TouchSystem();
+            touchSystem.Init();
         }
 
         void InitView() {

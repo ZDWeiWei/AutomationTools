@@ -18,5 +18,14 @@ namespace Sofunny.Tools.AutomationTools.UIGameProto {
                 return ID;
             }
         }
+        
+        public struct SendHVRotation : IGameProtoDoc {
+            public const string ID = "5_3";
+            public Quaternion hRota;
+            public Quaternion vRota;
+            public string GetID() {
+                return ID;
+            }
+        }
     }
 }
