@@ -19,14 +19,16 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
         }
 
         public void OnUpdate(float delta) {
-            if (system.Data.IsLocalRole == false || system.Data.Entity.IsLoadEntityObj == false) {
+            if (system.Data.IsLocalRole == false || system.Entity.IsLoadEntityObj == false) {
                 return;
             }
+            var rootPoint = system.Entity.GetPoint(CharacterEntity.Root);
             GameProtoManager.Send(new GameProtoDoc_Camera.SetPoint {
-                point = system.Data.Entity.GetPoint(CharacterEntity.Root)
+                point = rootPoint
             });
+            var rootRota = system.Entity.GetRota(CharacterEntity.Root);
             GameProtoManager.Send(new GameProtoDoc_Camera.SetRotation {
-                rota = system.Data.Entity.GetRota(CharacterEntity.Root)
+                rota = rootRota
             });
         }
     }

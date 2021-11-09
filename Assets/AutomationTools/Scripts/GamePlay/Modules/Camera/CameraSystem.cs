@@ -7,17 +7,17 @@ using UnityEngine;
 namespace Sofunny.Tools.AutomationTools.GamePlay {
     public partial class CameraSystem : SystemBase {
         public CameraData Data;
+        public CameraEntity Entity;
 
         protected override void OnInit() {
             base.OnInit();
             Data = new CameraData();
+            Entity = AddEntity<CameraEntity>();
             InitComponent();
         }
 
         private void InitComponent() {
-            AddComponent<CameraEntity>();
             AddComponent<CameraMove>();
-            AddComponent<CameraTarget>();
             AddComponent<CameraRota>();
         }
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Sofunny.Tools.AutomationTools.Asset;
+using Sofunny.Tools.AutomationTools.UIGameProto;
 using Sofunny.Tools.AutomationTools.Util;
 using UnityEngine;
 
@@ -16,14 +17,12 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
 
         public override void OnInit() {
             var system = (CameraSystem) this.system;
-            system.Data.SetEntity(this);
-            system.CreateEntity(URI.Camera);
+            system.CreateEntityObj(URI.Camera);
             SetCameraDistance(10);
-            ATUpdateRegister.AddLateUpdate(OnUpdate);
+            SetUpdateState(TranUpdateState.LateUpdate);
         }
 
         public override void OnClear() {
-            ATUpdateRegister.RemoveLateUpdate(OnUpdate);
             this.useCamera = null;
         }
 

@@ -6,14 +6,20 @@ using UnityEngine;
 
 namespace Sofunny.Tools.AutomationTools.GamePlay {
     public partial class SystemBase {
-        public const int Event_CreateEntityComplete = -1;
-        private List<IComponent> components = new List<IComponent>();
-        private GameObject entityObj;
-
         public interface IComponent {
             void Init(SystemBase system);
             void Clear();
         }
+
+        public interface IEntity {
+            void Init(SystemBase system);
+            void Clear();
+        }
+
+        public const int Event_CreateEntityComplete = -1;
+        private List<IComponent> components = new List<IComponent>();
+        private IEntity entity;
+        private GameObject entityObj;
 
         public void Init() {
             OnInit();
@@ -25,11 +31,12 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
         public void Clear() {
             handlers.Clear();
             RemoveComponent();
+            ClearEntity();
+            RemoveEntityObj();
             OnClear();
         }
 
         protected virtual void OnClear() {
-            RemoveEntity();
         }
 
         public void AddComponent<T>() where T : IComponent, new() {
@@ -45,7 +52,21 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
             components.Clear();
         }
 
-        public void CreateEntity(string url) {
+        public T AddEntity<T>() where T : IEntity, new() {
+            entity = new T();
+            entity.Init(this);
+            return (T) entity;
+        }
+
+        public void ClearEntity() {
+            if (entity == null) {
+                return;
+            }
+            entity.Clear();
+            entity = null;
+        }
+
+        public void CreateEntityObj(string url) {
             var request = AssetManager.LoadGamePlayObjAsync(url);
             request.completed += operation => {
                 var prefab = (GameObject) request.asset;
@@ -58,7 +79,7 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
             };
         }
 
-        private void RemoveEntity() {
+        private void RemoveEntityObj() {
             if (entityObj == null) {
                 return;
             }

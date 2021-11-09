@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Sofunny.Tools.AutomationTools.GamePlay {
+    [RequireComponent(typeof(ObjComponentKey))]
     public class ObjComponent : MonoBehaviour {
-        public CameraEntity.AttrState AttrState;
-        public string Key = "";
+        public CameraEntity.AttrState[] Attrs;
     }
 }

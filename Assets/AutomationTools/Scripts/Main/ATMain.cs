@@ -36,7 +36,7 @@ namespace Sofunny.Tools.AutomationTools.Main {
 
         void FixedUpdate() {
             if (updateRegister != null) {
-                updateRegister.OnFixUpdate(Time.fixedTime);
+                updateRegister.OnFixUpdate(Time.fixedDeltaTime);
             }
         }
 

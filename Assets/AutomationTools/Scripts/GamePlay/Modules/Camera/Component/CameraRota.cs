@@ -13,6 +13,7 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
         public void Init(SystemBase system) {
             this.system = (CameraSystem) system;
             TouchSystem.Register(OnRota);
+            this.system.Entity.SetLocalRota(CameraEntity.Vertical, Quaternion.Euler(new Vector3(25f,0f,0f)));
         }
 
         public void Clear() {
@@ -20,8 +21,12 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
             this.system = null;
         }
 
-        private void OnRota(float h, float v) {
-            var entity = this.system.Data.Entity;
+        private void OnRota(float h, float v, bool isDown) {
+            if (isDown == false) {
+                return;
+            }
+            
+            var entity = this.system.Entity;
             var hRota = entity.GetLocalRota(CameraEntity.Horizontal).eulerAngles;
             var vRota = entity.GetLocalRota(CameraEntity.Vertical).eulerAngles;
             hRota.y += h * hSpeed * Time.deltaTime;

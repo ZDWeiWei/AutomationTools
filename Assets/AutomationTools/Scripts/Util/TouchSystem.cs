@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Sofunny.Tools.AutomationTools.Util {
-    public delegate void TouchDelegate(float h, float v);
+    public delegate void TouchDelegate(float h, float v, bool isDown);
 
     public partial class TouchSystem {
         private List<TouchDelegate> m_TouchList = new List<TouchDelegate>(64);
@@ -21,19 +21,25 @@ namespace Sofunny.Tools.AutomationTools.Util {
             }
             if (Input.GetMouseButtonDown(0)) {
                 prevPoint = Input.mousePosition;
-                isDown = true;
+                this.isDown = true;
             }
             if (Input.GetMouseButtonUp(0)) {
-                isDown = false;
+                this.isDown = false;
             }
             if (isDown) {
                 var diffPoint = Input.mousePosition - prevPoint;
                 prevPoint = Input.mousePosition;
-                for (int i = 0; i < m_TouchList.Count; i++) {
-                    var callBack = m_TouchList[i];
-                    if (callBack != null) {
-                        callBack(diffPoint.x, -diffPoint.y);
-                    }
+                UpdateTouchList(diffPoint.x, -diffPoint.y, true);
+            } else {
+                UpdateTouchList(0, 0, false);
+            }
+        }
+
+        private void UpdateTouchList(float x, float y, bool isDown) {
+            for (int i = 0; i < m_TouchList.Count; i++) {
+                var callBack = m_TouchList[i];
+                if (callBack != null) {
+                    callBack(x, y, isDown);
                 }
             }
         }

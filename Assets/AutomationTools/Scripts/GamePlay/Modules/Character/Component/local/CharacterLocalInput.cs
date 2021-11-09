@@ -83,7 +83,8 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
                     moveH = 1;
                 }
             }
-            this.system.Data.SetMoveH(moveH);
+          //  this.system.Data.SetMoveH(moveH);
+            this.system.Dispatcher(CharacterSystem.Event_MoveH, moveH);
         }
 
         private void UpdateMoveVKey() {
@@ -97,7 +98,8 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
                     moveV = -1;
                 }
             }
-            this.system.Data.SetMoveV(moveV);
+           // this.system.Data.SetMoveV(moveV);
+            this.system.Dispatcher(CharacterSystem.Event_MoveV, moveV);
         }
     }
 }

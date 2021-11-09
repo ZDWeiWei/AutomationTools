@@ -7,26 +7,27 @@ using UnityEngine;
 namespace Sofunny.Tools.AutomationTools.GamePlay {
     public partial class CharacterSystem : SystemBase {
         public ChatacterData Data;
-        public TransformComponentData TranData;
+        public CharacterEntity Entity;
 
         protected override void OnInit() {
             base.OnInit();
             Data = new ChatacterData();
-            AddComponent<CharacterEntity>();
+            Entity = AddEntity<CharacterEntity>();
         }
 
         protected override void OnClear() {
             base.OnClear();
             Data = null;
-            TranData = null;
+            Entity = null;
         }
 
         public void SetIsLocalRole(bool isLocalRole) {
-            Data.SetIsLocalRole(isLocalRole);
+            Data.IsLocalRole = isLocalRole;
             if (isLocalRole) {
-                AddComponent<CharacterCamera>();
                 AddComponent<CharacterLocalInput>();
                 AddComponent<CharacterControllerMove>();
+                AddComponent<CharacterCamera>();
+                AddComponent<CharacterWeapon>();
             }
         }
     }

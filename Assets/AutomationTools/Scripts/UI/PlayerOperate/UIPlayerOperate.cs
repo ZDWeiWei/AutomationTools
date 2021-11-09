@@ -29,7 +29,7 @@ namespace Sofunny.Tools.AutomationTools.UI {
             BtnS.AddOnClick(KeyCode.S, OnBtnSCallBack);
             BtnA.AddOnClick(KeyCode.A, OnBtnACallBack);
             BtnD.AddOnClick(KeyCode.D, OnBtnDCallBack);
-            BtnJump.AddOnClick(KeyCode.J,OnBtnJumpCallBack);
+            BtnJump.AddOnClick(KeyCode.Space,OnBtnJumpCallBack);
             BtnFire.AddOnClick(KeyCode.K, OnBtnFireCallBack);
         }
 

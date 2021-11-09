@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Sofunny.Tools.AutomationTools.Util;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Sofunny.Tools.AutomationTools.GamePlay {
-    public class EntityBase : SystemBase.IComponent {
+    public class EntityBase : SystemBase.IEntity {
         public enum AttrState : int {
             Point = 0,
             Rotation = 1,
@@ -13,22 +15,35 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
             LocalScale = 4,
         }
 
-        public class MonoData {
+        public enum TranUpdateState {
+            None,
+            Update,
+            LateUpdate,
+            FixedUpdate,
+        }
+
+        public class ComponentData {
             public GameObject Obj = null;
             public Transform Tran = null;
+            public string ObjKey;
+            public Dictionary<int, AttrData> attrData;
+        }
+
+        public class AttrData {
             public AttrState AttrState;
             public bool IsChange = false;
-            public string ObjKey;
             public Vector3 TargetPoint = Vector3.zero;
             public Quaternion TargetRota = Quaternion.identity;
         }
 
-        private Dictionary<string, List<MonoData>> objectDatas = new Dictionary<string, List<MonoData>>();
         protected SystemBase system;
+        private Dictionary<string, ComponentData> objectDatas = new Dictionary<string, ComponentData>();
+        private TranUpdateState updateState = TranUpdateState.None;
 
         public void Init(SystemBase system) {
             this.system = system;
             this.system.Register<GameObject>(SystemBase.Event_CreateEntityComplete, OnCreateEntityCallBack);
+            SetUpdateState(TranUpdateState.Update);
             OnInit();
         }
 
@@ -37,6 +52,7 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
 
         public void Clear() {
             OnClear();
+            RemoveUpdateState();
             this.system.Register<GameObject>(SystemBase.Event_CreateEntityComplete, OnCreateEntityCallBack);
             objectDatas.Clear();
             this.system = null;
@@ -45,36 +61,73 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
         public virtual void OnClear() {
         }
 
-        public void OnUpdate(float delta) {
+        private void OnBaseUpdate(float delta) {
             if (objectDatas.Count <= 0) {
                 return;
             }
             UpdateAttributes();
         }
 
+        protected void SetUpdateState(TranUpdateState state) {
+            if (updateState == state) {
+                return;
+            }
+            RemoveUpdateState();
+            updateState = state;
+            switch (state) {
+                case TranUpdateState.Update:
+                    ATUpdateRegister.AddUpdate(OnBaseUpdate);
+                    break;
+                case TranUpdateState.FixedUpdate:
+                    ATUpdateRegister.AddFixedUpdate(OnBaseUpdate);
+                    break;
+                case TranUpdateState.LateUpdate:
+                    ATUpdateRegister.AddLateUpdate(OnBaseUpdate);
+                    break;
+            }
+        }
+
+        protected void RemoveUpdateState() {
+            switch (updateState) {
+                case TranUpdateState.Update:
+                    ATUpdateRegister.RemoveUpdate(OnBaseUpdate);
+                    break;
+                case TranUpdateState.FixedUpdate:
+                    ATUpdateRegister.RemoveFixedUpdate(OnBaseUpdate);
+                    break;
+                case TranUpdateState.LateUpdate:
+                    ATUpdateRegister.RemoveLateUpdate(OnBaseUpdate);
+                    break;
+            }
+            updateState = TranUpdateState.None;
+        }
+
         private void UpdateAttributes() {
-            foreach (var values in objectDatas.Values) {
-                for (int i = 0; i < values.Count; i++) {
-                    var value = values[i];
-                    if (value.IsChange == false || value.Tran == null) {
+            foreach (var componentData in objectDatas.Values) {
+                if (componentData.Tran == null) {
+                    continue;
+                }
+                var tran = componentData.Tran;
+                foreach (var value in componentData.attrData.Values) {
+                    if (value.IsChange == false) {
                         continue;
                     }
                     value.IsChange = false;
                     switch (value.AttrState) {
                         case AttrState.Point:
-                            value.Tran.position = value.TargetPoint;
+                            tran.position = value.TargetPoint;
                             break;
                         case AttrState.Rotation:
-                            value.Tran.rotation = value.TargetRota;
+                            tran.rotation = value.TargetRota;
                             break;
                         case AttrState.LocalPoint:
-                            value.Tran.localPosition = value.TargetPoint;
+                            tran.localPosition = value.TargetPoint;
                             break;
                         case AttrState.LocalRotation:
-                            value.Tran.localRotation = value.TargetRota;
+                            tran.localRotation = value.TargetRota;
                             break;
                         case AttrState.LocalScale:
-                            value.Tran.localScale = value.TargetPoint;
+                            tran.localScale = value.TargetPoint;
                             break;
                     }
                 }
@@ -82,76 +135,77 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
         }
 
         private void OnCreateEntityCallBack(GameObject gameObj) {
-            var cameraMonoList = gameObj.GetComponentsInChildren<ObjComponent>(true);
-            for (int i = 0; i < cameraMonoList.Length; i++) {
-                var cameraMono = cameraMonoList[i];
-                var key = cameraMono.Key;
-                if (HasMonoDataObj(key, cameraMono.AttrState)) {
-                    Debug.LogErrorFormat("obj 重复添加 key:{0}, objState: {1}", key, cameraMono.AttrState);
-                    return;
+            GetComponentObjs(gameObj);
+            OnCreateEntityComponent(gameObj);
+        }
+
+        private void GetComponentObjs(GameObject gameObj) {
+            var objComponentKey = gameObj.GetComponentsInChildren<ObjComponentKey>(true);
+            for (var i = 0; i < objComponentKey.Length; i++) {
+                var cKey = objComponentKey[i];
+                var cGameObj = cKey.gameObject;
+                var key = cKey.Key == "" ? cGameObj.name : cKey.Key;
+                var compData = GetComponentData(key);
+                compData.Obj = cGameObj;
+                compData.Tran = cGameObj.transform;
+                var component = cKey.GetComponent<ObjComponent>();
+                for (var j = 0; j < component.Attrs.Length; j++) {
+                    var attrState = component.Attrs[j];
+                    var attrKey = (int) attrState;
+                    if (compData.attrData.ContainsKey(attrKey) == false) {
+                        compData.attrData.Add(attrKey, GetNewAttrData(attrState));
+                    }
                 }
-                var monoData = GetMonoData(key, cameraMono.AttrState);
-                monoData.Obj = cameraMono.gameObject;
-                monoData.Tran = cameraMono.transform;
             }
         }
 
-        private MonoData GetMonoData(string key, AttrState attrState) {
-            List<MonoData> lists;
-            if (objectDatas.TryGetValue(key, out lists) == false) {
-                lists = new List<MonoData>();
-                objectDatas.Add(key, lists);
+        protected virtual void OnCreateEntityComponent(GameObject gameObj) {
+        }
+
+        private ComponentData GetComponentData(string key) {
+            ComponentData data;
+            if (objectDatas.TryGetValue(key, out data) == false) {
+                data = new ComponentData();
+                data.attrData = new Dictionary<int, AttrData>();
+                objectDatas.Add(key, data);
             }
-            MonoData monoData;
-            for (int i = 0; i < lists.Count; i++) {
-                monoData = lists[i];
-                if (monoData.AttrState == attrState) {
-                    return monoData;
-                }
+            return data;
+        }
+
+        private AttrData GetNewAttrData(AttrState state) {
+            var attrData = new AttrData();
+            attrData.AttrState = state;
+            attrData.IsChange = false;
+            attrData.TargetPoint = Vector3.zero;
+            attrData.TargetRota = Quaternion.identity;
+            return attrData;
+        }
+
+        private AttrData GetAttrData(string key, AttrState state) {
+            ComponentData compData = GetComponentData(key);
+            var attrKey = (int) state;
+            AttrData attrData;
+            if (compData.attrData.TryGetValue(attrKey, out attrData) == false) {
+                attrData = GetNewAttrData(state);
+                compData.attrData.Add(attrKey, attrData);
             }
-            monoData = new MonoData();
-            monoData.Obj = null;
-            monoData.Tran = null;
-            monoData.ObjKey = key;
-            monoData.AttrState = attrState;
-            lists.Add(monoData);
-            return monoData;
+            return attrData;
         }
 
         protected GameObject GetObj(string key) {
-            List<MonoData> lists;
-            if (objectDatas.TryGetValue(key, out lists)) {
-                if (lists.Count <= 0) {
-                    return null;
-                }
-                return lists[0].Obj;
+            ComponentData data;
+            if (objectDatas.TryGetValue(key, out data)) {
+                return data.Obj;
             }
             return null;
         }
 
         protected Transform GetTran(string key) {
-            List<MonoData> lists;
-            if (objectDatas.TryGetValue(key, out lists)) {
-                if (lists.Count <= 0) {
-                    return null;
-                }
-                return lists[0].Tran;
+            ComponentData data;
+            if (objectDatas.TryGetValue(key, out data)) {
+                return data.Tran;
             }
             return null;
-        }
-
-        private bool HasMonoDataObj(string key, AttrState attrState) {
-            List<MonoData> lists;
-            if (objectDatas.TryGetValue(key, out lists)) {
-                MonoData monoData;
-                for (int i = 0; i < lists.Count; i++) {
-                    monoData = lists[i];
-                    if (monoData.AttrState == attrState && monoData.Obj != null) {
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
 
         public void SetPoint(string key, Vector3 value) {
@@ -195,30 +249,54 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
         }
 
         private void SetVector3(string key, AttrState attr, Vector3 value) {
-            var monoData = GetMonoData( key, attr);
-            if (monoData.TargetPoint != value) {
-                monoData.TargetPoint = value;
-                monoData.IsChange = true;
+            var data = GetAttrData(key, attr);
+            if (data.TargetPoint != value) {
+                data.TargetPoint = value;
+                data.IsChange = true;
             }
         }
 
         private void SetRotation(string key, AttrState attr, Quaternion value) {
-            var monoData = GetMonoData(key, attr);
-            if (monoData.TargetRota.eulerAngles != value.eulerAngles) {
-                monoData.TargetRota = value;
-                monoData.IsChange = true;
+            var data = GetAttrData(key, attr);
+            if (data.TargetRota.eulerAngles != value.eulerAngles) {
+                data.TargetRota = value;
+                data.IsChange = true;
             }
         }
 
         private Vector3 GetVector3(string key, AttrState attr) {
-            var monoData = GetMonoData(key, attr);
-            return new Vector3(monoData.TargetPoint.x, monoData.TargetPoint.y, monoData.TargetPoint.z);
+            var componentData = GetComponentData(key);
+            var point = Vector3.zero;
+            if (componentData.Tran != null) {
+                switch (attr) {
+                    case AttrState.Point:
+                        point = componentData.Tran.position;
+                        break;
+                    case AttrState.LocalPoint:
+                        point = componentData.Tran.localPosition;
+                        break;
+                    case AttrState.LocalScale:
+                        point = componentData.Tran.localScale;
+                        break;
+                }
+            }
+            return point;
         }
 
         private Quaternion GetRotation(string key, AttrState attr) {
-            var monoData = GetMonoData(key, attr);
-            return new Quaternion(monoData.TargetRota.x, monoData.TargetRota.y, monoData.TargetRota.z,
-                monoData.TargetRota.w);
+            var componentData = GetComponentData(key);
+            var rota = Quaternion.identity;
+            if (componentData.Tran != null) {
+                switch (attr) {
+                    case AttrState.Rotation:
+                        rota = componentData.Tran.rotation;
+                        break;
+                    case AttrState.LocalRotation:
+                        rota = componentData.Tran.localRotation;
+                        break;
+                }
+            }
+            return rota;
         }
     }
 }

@@ -9,9 +9,6 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
     public class CharacterManager : IGameWorld {
         private List<CharacterSystem> systems = new List<CharacterSystem>();
 
-        public void Register() {
-        }
-
         public void Init() {
             AddCharacterSystem(true);
             GameProtoManager.Send(new GameProtoDoc_Character.OpenCharacterUI());

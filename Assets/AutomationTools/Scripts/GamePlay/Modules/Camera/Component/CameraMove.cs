@@ -1,31 +1,40 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Sofunny.Tools.AutomationTools.UIGameProto;
 using Sofunny.Tools.AutomationTools.Util;
 using UnityEngine;
 
 namespace Sofunny.Tools.AutomationTools.GamePlay {
     public class CameraMove : SystemBase.IComponent {
         private CameraSystem system;
-        private float speed = 10f;
+        private float speed = 20f;
+        private Vector3 targetPoint = Vector3.zero;
 
         public void Init(SystemBase system) {
             this.system = (CameraSystem) system;
-            ATUpdateRegister.AddUpdate(OnUpdate);
+            ATUpdateRegister.AddLateUpdate(OnUpdate);
+            GameProtoManager.AddListener(GameProtoDoc_Camera.SetPoint.ID, OnSetPointCallBack);
         }
 
         public void Clear() {
-            ATUpdateRegister.RemoveUpdate(OnUpdate);
+            ATUpdateRegister.AddLateUpdate(OnUpdate);
+            GameProtoManager.RemoveListener(GameProtoDoc_Camera.SetPoint.ID, OnSetPointCallBack);
             this.system = null;
+        }
+        
+        private void OnSetPointCallBack(IGameProtoDoc message) {
+            var data = (GameProtoDoc_Camera.SetPoint) message;
+            targetPoint = data.point;
         }
 
         public void OnUpdate(float delta) {
-            var data = this.system.Data;
-            var point = data.Entity.GetPoint(CameraEntity.Root);
-            var distance = Vector3.Distance(point, data.TargetPoint);
+            var entity = this.system.Entity;
+            var point = entity.GetPoint(CameraEntity.Root);
+            var distance = Vector3.Distance(point, entity.GetPoint(CameraEntity.Root));
             if (distance > 10f) {
-                data.Entity.SetPoint(CameraEntity.Root, data.TargetPoint);
+                entity.SetPoint(CameraEntity.Root, targetPoint);
             } else {
-                data.Entity.SetPoint(CameraEntity.Root, Vector3.Lerp(point, data.TargetPoint, speed * delta));
+                entity.SetPoint(CameraEntity.Root, Vector3.Lerp(point, targetPoint, speed * delta));
             }
         }
     }

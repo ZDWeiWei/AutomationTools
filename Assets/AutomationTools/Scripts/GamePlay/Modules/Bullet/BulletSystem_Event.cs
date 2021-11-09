@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Sofunny.Tools.AutomationTools.GamePlay {
-    public class CameraData {
+    public partial class BulletSystem {
+        public const int Event_CreateBullet = 1;
     }
 }

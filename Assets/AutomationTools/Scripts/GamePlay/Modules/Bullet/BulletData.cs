@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Sofunny.Tools.AutomationTools.GamePlay {
-    public class CameraData {
+    public class BulletData {
+        public int BulletId {
+            get;
+            set;
+        }
     }
 }
