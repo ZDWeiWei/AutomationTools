@@ -4,24 +4,24 @@ using Sofunny.Tools.AutomationTools.UIGameProto;
 using UnityEngine;
 
 namespace Sofunny.Tools.AutomationTools.GamePlay {
-    public class BulletManager : IGameWorld {
+    public class BulletManager : ManagerBase {
         private Dictionary<int, BulletSystem> bulletData = new Dictionary<int, BulletSystem>();
         private int bulletIndex = 0;
 
-        public void Init() {
+        override protected void OnInit() {
             GameProtoManager.AddListener(GameProtoDoc_Bullet.CreateBullet.ID, OnCreateBulletCallBack);
             GameProtoManager.AddListener(GameProtoDoc_Bullet.RemoveBullet.ID, OnRemoveBulletCallBack);
         }
 
-        public void Clear() {
+        override protected void OnClear() {
             GameProtoManager.RemoveListener(GameProtoDoc_Bullet.CreateBullet.ID, OnCreateBulletCallBack);
             GameProtoManager.RemoveListener(GameProtoDoc_Bullet.RemoveBullet.ID, OnRemoveBulletCallBack);
+            ClearAllBullet();
         }
 
         private void OnCreateBulletCallBack(IGameProtoDoc message) {
             var index = bulletIndex++;
-            var bulletSystem = new BulletSystem();
-            bulletSystem.Init();
+            var bulletSystem = AddSystem<BulletSystem>();
             bulletSystem.SetData(index, (GameProtoDoc_Bullet.CreateBullet) message);
             bulletData.Add(index, bulletSystem);
         }
@@ -33,6 +33,13 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
                 bulletSystem.Clear();
                 bulletData.Remove(data.BulletId);
             }
+        }
+
+        private void ClearAllBullet() {
+            foreach (var value in bulletData.Values) {
+                value.Clear();
+            }
+            bulletData.Clear();
         }
     }
 }

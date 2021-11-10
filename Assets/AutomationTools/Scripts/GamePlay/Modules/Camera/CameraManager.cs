@@ -3,30 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Sofunny.Tools.AutomationTools.GamePlay {
-    public class CameraManager : IGameWorld {
+    public class CameraManager : ManagerBase {
         private CameraSystem cameraSystem;
-
-        public void Register() {
+        
+        override protected void OnInit() {
+            cameraSystem = AddSystem<CameraSystem>();
         }
 
-        public void Init() {
-            AddSystem();
-        }
-
-        public void Clear() {
-            RemoveSystem();
-        }
-
-        private void AddSystem() {
-            cameraSystem = new CameraSystem();
-            cameraSystem.Init();
-        }
-
-        private void RemoveSystem() {
-            if (cameraSystem == null) {
-                cameraSystem.Clear();
-                cameraSystem = null;
-            }
+        override protected void OnClear() {
+            cameraSystem.Clear();
+            cameraSystem = null;
         }
     }
 }

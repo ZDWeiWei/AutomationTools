@@ -8,30 +8,23 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
     public class CharacterEntity : EntityBase {
         public const string Root = "Root";
         public const string Body = "Body";
-        public const string WP1 = "WP1";
-        public const string WP2 = "WP2";
-        private Transform entityTran;
-        private GameObject entityObj;
+        public const string WP1 = "WP1Box";
+        public const string WP2 = "WP2Box";
         public bool IsLoadEntityObj {
             get { return entityTran != null; }
         }
 
         public override void OnInit() {
-            var system = (CharacterSystem) this.system;
-            system.Entity = this;
             SetPoint(CharacterEntity.Root, new Vector3(0f, 10f, 0f));
-            system.CreateEntityObj(URI.Role);
+            CreateEntityObj(URI.Role);
         }
 
         public override void OnClear() {
             base.OnClear();
-            entityTran = null;
         }
 
-        protected override void OnCreateEntityComponent(GameObject gameObj) {
-            base.OnCreateEntityComponent(gameObj);
-            entityObj = gameObj;
-            entityTran = gameObj.transform;
+        protected override void OnCreateEntityComponent() {
+            base.OnCreateEntityComponent();
         }
 
         public Vector3 TransformDirection(string key, Vector3 dir) {

@@ -6,23 +6,22 @@ using Sofunny.Tools.AutomationTools.Util;
 using UnityEngine;
 
 namespace Sofunny.Tools.AutomationTools.GamePlay {
-    public class CharacterManager : IGameWorld {
+    public class CharacterManager : ManagerBase {
         private List<CharacterSystem> systems = new List<CharacterSystem>();
 
-        public void Init() {
+        override protected void OnInit() {
             AddCharacterSystem(true);
             GameProtoManager.Send(new GameProtoDoc_Character.OpenCharacterUI());
         }
 
-        public void Clear() {
+        override protected void OnClear() {
             RemoveAllRole();
         }
 
         private void AddCharacterSystem(bool isLocalRole) {
-            var system = new CharacterSystem();
-            system.Init();
-            system.SetIsLocalRole(isLocalRole);
+            var system = AddSystem<CharacterSystem>();
             systems.Add(system);
+            system.SetIsLocalRole(isLocalRole);
         }
 
         private void RemoveAllRole() {

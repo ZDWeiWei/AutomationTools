@@ -5,7 +5,7 @@ using Sofunny.Tools.AutomationTools.Asset;
 using UnityEngine;
 
 namespace Sofunny.Tools.AutomationTools.GamePlay {
-    public partial class SystemBase {
+    public partial class SystemBase : ManagerBase.ISystem {
         public interface IComponent {
             void Init(SystemBase system);
             void Clear();
@@ -19,9 +19,14 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
         public const int Event_CreateEntityComplete = -1;
         private List<IComponent> components = new List<IComponent>();
         private IEntity entity;
-        private GameObject entityObj;
+        private bool init = false;
 
         public void Init() {
+            if (init) {
+                Debug.LogError("重复初始化");
+                return;
+            }
+            init = true;
             OnInit();
         }
 
@@ -29,10 +34,10 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
         }
 
         public void Clear() {
+            init = false;
             handlers.Clear();
             RemoveComponent();
             ClearEntity();
-            RemoveEntityObj();
             OnClear();
         }
 
@@ -64,27 +69,6 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
             }
             entity.Clear();
             entity = null;
-        }
-
-        public void CreateEntityObj(string url) {
-            var request = AssetManager.LoadGamePlayObjAsync(url);
-            request.completed += operation => {
-                var prefab = (GameObject) request.asset;
-                if (prefab != null) {
-                    entityObj = GameObject.Instantiate(prefab);
-                    Dispatcher(Event_CreateEntityComplete, entityObj);
-                } else {
-                    Debug.LogError("GamePlayRole 加载失败:");
-                }
-            };
-        }
-
-        private void RemoveEntityObj() {
-            if (entityObj == null) {
-                return;
-            }
-            GameObject.Destroy(entityObj);
-            entityObj = null;
         }
     }
 }

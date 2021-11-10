@@ -16,11 +16,8 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
             Map = 2,
         }
 
-        public void Register() {
-            GameProtoManager.AddListener(GameProtoDoc_GameWorlLayer.SetLayer.ID, OnSetLayerCallBack);
-        }
-
         public void Init() {
+            GameProtoManager.AddListener(GameProtoDoc_GameWorlLayer.SetLayer.ID, OnSetLayerCallBack);
             CreateEntity();
         }
 

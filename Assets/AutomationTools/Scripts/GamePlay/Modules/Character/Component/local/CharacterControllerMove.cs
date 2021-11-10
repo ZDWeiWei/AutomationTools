@@ -69,12 +69,10 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
         }
 
         private void OnMoveHCallBack(float value) {
-            Debug.Log("OnMoveHCallBack:" + value);
             moveH = value;
         }
 
         private void OnMoveVCallBack(float value) {
-            Debug.Log("OnMoveVCallBack:" + value);
             moveV = value;
         }
 

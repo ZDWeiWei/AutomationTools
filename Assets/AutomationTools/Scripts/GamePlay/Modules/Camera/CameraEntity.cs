@@ -16,8 +16,7 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
         private Camera useCamera;
 
         public override void OnInit() {
-            var system = (CameraSystem) this.system;
-            system.CreateEntityObj(URI.Camera);
+            CreateEntityObj(URI.Camera);
             SetCameraDistance(10);
             SetUpdateState(TranUpdateState.LateUpdate);
         }

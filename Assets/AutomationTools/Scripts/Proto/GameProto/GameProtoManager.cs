@@ -4,8 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Sofunny.Tools.AutomationTools.UIGameProto {
+    public delegate void ProtoCallBack(IGameProtoCallBackData message);
     public interface IGameProtoDoc {
         string GetID();
+    }
+    public interface IGameProtoCallBackData {
     }
 
     public static class GameProtoManager {

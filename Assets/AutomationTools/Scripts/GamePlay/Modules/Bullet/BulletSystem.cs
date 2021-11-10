@@ -22,8 +22,8 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
         }
 
         public void SetData(int bulletId, GameProtoDoc_Bullet.CreateBullet data) {
-            AddComponent<BulletMove>();
             Data.BulletId = bulletId;
+            AddComponent<BulletMove>();
             Dispatcher(Event_CreateBullet, data);
         }
     }

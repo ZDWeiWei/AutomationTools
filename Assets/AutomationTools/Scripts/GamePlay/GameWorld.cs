@@ -25,6 +25,7 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
             AddManager<CharacterManager>();
             AddManager<CameraManager>();
             AddManager<BulletManager>();
+            AddManager<WeaponManager>();
         }
 
         public void AddManager<T>() where T : IGameWorld, new() {

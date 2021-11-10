@@ -7,34 +7,60 @@ using UnityEngine;
 namespace Sofunny.Tools.AutomationTools.GamePlay {
     public class CharacterWeapon : SystemBase.IComponent {
         private CharacterSystem system;
-        private Vector3 scale;
+        private List<int> weapons = new List<int>();
         private bool isDown = false;
         private bool isRotaDown = false;
-        private float fireDeltaTime = 0.0f;
+        private bool isFire = false;
 
         public void Init(SystemBase systemBase) {
             system = (CharacterSystem) systemBase;
-            // system.Register<bool>(CharacterSystem.Event_Fire, OnFireCallBack);
-            GameProtoManager.AddListener(GameProtoDoc_Character.OnFire.ID, OnFireCallBack);
+            system.Register<bool>(CharacterSystem.Event_Fire, OnFireCallBack);
+            system.Register<GameObject>(SystemBase.Event_CreateEntityComplete, OnCreateEntityCompleteCallBack);
             TouchSystem.Register(OnRota);
             ATUpdateRegister.AddUpdate(OnUpdate);
         }
 
         public void Clear() {
+            weapons.Clear();
             ATUpdateRegister.RemoveUpdate(OnUpdate);
-            GameProtoManager.RemoveListener(GameProtoDoc_Character.OnFire.ID, OnFireCallBack);
-            // system.Register<bool>(CharacterSystem.Event_Jump, OnFireCallBack);
+            system.UnRegister<GameObject>(SystemBase.Event_CreateEntityComplete, OnCreateEntityCompleteCallBack);
+            system.UnRegister<bool>(CharacterSystem.Event_Fire, OnFireCallBack);
             TouchSystem.Unregister(OnRota);
         }
 
+        private void OnCreateEntityCompleteCallBack(GameObject gameObj) {
+            GameProtoManager.Send(new GameProtoDoc_Weapon.CreateWeapon {
+                Sign = "Wp1",
+                CallBack = OnCreateWeapon1CallBack,
+            });
+            GameProtoManager.Send(new GameProtoDoc_Weapon.CreateWeapon {
+                Sign = "Wp1",
+                CallBack = OnCreateWeapon2CallBack,
+            });
+        }
+
+        public void OnCreateWeapon1CallBack(IGameProtoCallBackData message) {
+            var data = (GameProtoDoc_Weapon.CreateWeaponCallBackData) message;
+            weapons.Add(data.WeaponId);
+            this.system.Entity.SetParent(CharacterEntity.WP1, data.WeaponTran);
+        }
+
+        public void OnCreateWeapon2CallBack(IGameProtoCallBackData message) {
+            var data = (GameProtoDoc_Weapon.CreateWeaponCallBackData) message;
+            weapons.Add(data.WeaponId);
+            this.system.Entity.SetParent(CharacterEntity.WP2, data.WeaponTran);
+        }
+
         private void OnUpdate(float delta) {
-            if (isDown == false && isRotaDown == false) {
-                return;
-            }
-            fireDeltaTime -= delta;
-            if (fireDeltaTime < 0) {
-                Fire();
-                fireDeltaTime = 0.5f;
+            var isFire = isDown || isRotaDown;
+            if (isFire != this.isFire) {
+                this.isFire = isFire;
+                for (int i = 0; i < weapons.Count; i++) {
+                    GameProtoManager.Send(new GameProtoDoc_Weapon.Fire {
+                        WeaponId = weapons[i],
+                        IsFire = isFire,
+                    });
+                }
             }
         }
 
@@ -42,28 +68,8 @@ namespace Sofunny.Tools.AutomationTools.GamePlay {
             this.isRotaDown = isDown;
         }
 
-        // private void OnFireCallBack(bool isDown) {
-        //     this.isDown = isDown;
-        // }
-        
-        private void OnFireCallBack(IGameProtoDoc message) {
-            var data = (GameProtoDoc_Character.OnFire) message;
-            this.isDown = data.isDown;
-        }
-
-        private void Fire() {
-            GameProtoManager.Send(new GameProtoDoc_Bullet.CreateBullet {
-                BulletType = 1,
-                Sign = "",
-                StartPoint = this.system.Entity.GetPoint(CharacterEntity.WP1),
-                StartRota = this.system.Entity.GetRota(CharacterEntity.WP1)
-            });
-            GameProtoManager.Send(new GameProtoDoc_Bullet.CreateBullet {
-                BulletType = 1,
-                Sign = "",
-                StartPoint = this.system.Entity.GetPoint(CharacterEntity.WP2),
-                StartRota = this.system.Entity.GetRota(CharacterEntity.WP2)
-            });
+        private void OnFireCallBack(bool isDown) {
+            this.isDown = isDown;
         }
     }
 }
