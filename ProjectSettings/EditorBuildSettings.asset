@@ -4,5 +4,14 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/AutomationTools/Examples/Scenes/ATMain.unity
+    guid: 1312a34628bacf84b9b652cbc939d5aa
+  - enabled: 1
+    path: Assets/AutomationTools/Examples/Scenes/Game.unity
+    guid: eaea49debaeb37d4fb5c2496479e8e39
+  - enabled: 1
+    path: Assets/AutomationTools/Examples/Scenes/SubScene/TestMap.unity
+    guid: c6de76191524d1b4abcc165eb98fb4dd
   m_configObjects: {}

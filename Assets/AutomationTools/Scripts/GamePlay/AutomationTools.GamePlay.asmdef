@@ -1,0 +1,16 @@
+{
+    "name": "AutomationTools.GamePlay",
+    "references": [
+        "AutomationTools.Util",
+        "AutomationTools.Asset",
+        "AutomationTools.Proto"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

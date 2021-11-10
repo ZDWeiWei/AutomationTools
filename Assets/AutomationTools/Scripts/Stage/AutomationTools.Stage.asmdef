@@ -1,0 +1,15 @@
+{
+    "name": "AutomationTools.Stage",
+    "references": [
+        "AutomationTools.Util",
+        "AutomationTools.Proto"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}
